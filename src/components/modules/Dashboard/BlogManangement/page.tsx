@@ -19,7 +19,22 @@ import RitchTextEditor from "@/components/ui/rich-text-editor";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 
-const BlogManagement = () => {
+type BlogProps = {
+  token: string;
+};
+
+function stripHtml(html: string) {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent || div.innerText || "";
+}
+
+function truncateText(text: string, maxLength = 50) {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength) + "...";
+}
+
+const BlogManagement = ({ token }: BlogProps) => {
   const [blogs, setBlogs] = useState<any[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingBlog, setEditingBlog] = useState<any>(null);
@@ -94,10 +109,14 @@ const BlogManagement = () => {
 
   // Save or update
   const handleSave = async () => {
-    const url = isEditing
-      ? `http://localhost:5000/api/blog/${editingBlog._id}`
-      : "http://localhost:5000/api/blog";
-    const method = isEditing ? "PUT" : "POST";
+    let url = "http://localhost:5000/api/blog";
+    let method = "POST";
+
+    if (isEditing && editingBlog && editingBlog._id) {
+      url = `http://localhost:5000/api/blog/${editingBlog._id}`;
+      method = "PUT";
+    }
+    // const method = isEditing ? "PUT" : "POST";
     const payload = {
       title: formData.title,
       brief: formData.brief,
@@ -107,13 +126,16 @@ const BlogManagement = () => {
       readTime: formData.readTime,
     };
 
-    console.log(payload);
     const res = await fetch(url, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(payload),
     });
     const json = await res.json();
+    console.log(json);
     if (isEditing)
       setBlogs((prev) =>
         prev.map((b) => (b._id === json.data._id ? json.data : b))
@@ -272,13 +294,8 @@ const BlogManagement = () => {
             <TableRow key={b._id}>
               <TableCell>{b.title}</TableCell>
               <TableCell>{b.brief}</TableCell>
-              <TableCell>
-                <div
-                  className="prose max-w-none overflow-auto"
-                  style={{ maxHeight: "150px" }}
-                  dangerouslySetInnerHTML={{ __html: b.content }}
-                />
-              </TableCell>
+              <TableCell>{truncateText(stripHtml(b.content), 80)}</TableCell>
+
               <TableCell>
                 {new Date(b.publishedDate).toLocaleDateString()}
               </TableCell>
