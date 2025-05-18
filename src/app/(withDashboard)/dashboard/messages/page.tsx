@@ -1,14 +1,13 @@
 import ContactManagement from "@/components/modules/Dashboard/ContactManagement/page";
-import { authOptions } from "@/utils/authOptions";
-import { getServerSession } from "next-auth";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 const MessageTable = async () => {
-	const session = await getServerSession(authOptions);
+  const cookieStore = await cookies();
+  const token = cookieStore.get("authToken")?.value;
 
-	// REDIRECT TO LOGIN PAGE IF SESSION IS NOT AVAILABLE
-	if (!session?.user) redirect("/login");
-	return <ContactManagement />;
+  if (!token) redirect("/login");
+  return <ContactManagement />;
 };
 
 export default MessageTable;
