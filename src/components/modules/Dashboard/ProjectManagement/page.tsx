@@ -17,8 +17,11 @@ import { Pencil, Trash } from "lucide-react";
 import axios from "axios";
 import Image from "next/image";
 import toast from "react-hot-toast";
+type ProjectProps = {
+  token: string;
+};
 
-const DashboardProjectTable = () => {
+const DashboardProjectTable = ({ token }: ProjectProps) => {
   const [projects, setProjects] = useState<any[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -67,7 +70,10 @@ const DashboardProjectTable = () => {
       "https://portfolio-v2-alpha-woad.vercel.app/api/projects",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(formData),
       }
     );
@@ -92,10 +98,14 @@ const DashboardProjectTable = () => {
   const handleSave = async () => {
     if (isEditing) {
       const res = await fetch(
-        `https://portfolio-v2-alpha-woad.vercel.app/api/projects/${editingProject._id}`,
+        // `https://portfolio-v2-alpha-woad.vercel.app/api/projects/${editingProject._id}`,
+        `http://localhost:5000/api/projects/${editingProject._id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(formData),
         }
       );
@@ -103,9 +113,7 @@ const DashboardProjectTable = () => {
       setProjects((prev) =>
         prev.map((proj) => (proj._id === result.data._id ? result.data : proj))
       );
-    } else {
-      handleCreate();
-    }
+    } else handleCreate();
 
     setIsEditing(false);
     setEditingProject(null);
@@ -117,6 +125,7 @@ const DashboardProjectTable = () => {
       `https://portfolio-v2-alpha-woad.vercel.app/api/projects/${projectId}`,
       {
         method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
       }
     );
     if (res.ok) {

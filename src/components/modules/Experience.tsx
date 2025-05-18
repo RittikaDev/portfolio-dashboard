@@ -24,7 +24,11 @@ interface Experience {
   description: string;
 }
 
-export default function Experience() {
+type ExpProps = {
+  token: string;
+};
+
+export default function Experience({ token }: ExpProps) {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [form, setForm] = useState<Experience>({
     title: "",
@@ -60,7 +64,10 @@ export default function Experience() {
 
     const res = await fetch(url, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(form),
     });
 
@@ -97,6 +104,7 @@ export default function Experience() {
               `http://localhost:5000/api/experience/${id}`,
               {
                 method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
               }
             );
             if (res.ok) {

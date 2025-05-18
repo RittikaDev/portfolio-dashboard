@@ -7,7 +7,7 @@ const MessageTable = async () => {
   const token = cookieStore.get("authToken")?.value;
 
   if (!token) redirect("/login");
-  return <ContactManagement />;
+  return <ContactManagement token={token} />;
 };
 
 export default MessageTable;

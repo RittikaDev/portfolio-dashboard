@@ -13,8 +13,11 @@ interface Skill {
   _id?: string;
   title: string;
 }
+type SkillProps = {
+  token: string;
+};
 
-export default function Skills() {
+export default function Skills({ token }: SkillProps) {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [form, setForm] = useState<Skill>({ title: "" });
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -56,7 +59,10 @@ export default function Skills() {
 
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(form),
       });
 
@@ -89,6 +95,7 @@ export default function Skills() {
           onClick: async () => {
             const res = await fetch(`http://localhost:5000/api/skills/${id}`, {
               method: "DELETE",
+              headers: { Authorization: `Bearer ${token}` },
             });
             if (res.ok) {
               fetchSkills();
