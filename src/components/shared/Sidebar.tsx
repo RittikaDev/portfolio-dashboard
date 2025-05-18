@@ -1,10 +1,13 @@
 "use client";
 
+import { logout } from "@/redux/features/auth/authSlice";
+import { useLogoutUserMutation } from "@/redux/features/authApi";
 import { File, MessageCircle } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { FaHome, FaTasks } from "react-icons/fa";
+import { useDispatch } from "react-redux";
 
 const Sidebar = () => {
 	const pathName = usePathname();
@@ -33,6 +36,20 @@ const Sidebar = () => {
 
 	const toggleSidebar = () => {
 		setIsSidebarOpen(!isSidebarOpen);
+	};
+
+	const dispatch = useDispatch();
+	const router = useRouter();
+	const [logoutUser] = useLogoutUserMutation();
+
+	const handleLogout = async () => {
+		try {
+			await logoutUser(null).unwrap();
+			dispatch(logout());
+			router.push("/login");
+		} catch (error) {
+			console.error("Logout failed:", error);
+		}
 	};
 
 	return (
@@ -153,6 +170,14 @@ const Sidebar = () => {
 								</Link>
 							</li>
 						</ul>
+					</div>
+					<div className="absolute bottom-4 left-4 right-4">
+						<button
+							onClick={handleLogout}
+							className="w-full p-3 text-left rounded-md bg-red-500 text-white hover:bg-red-600"
+						>
+							Logout
+						</button>
 					</div>
 				</div>
 			) : null}

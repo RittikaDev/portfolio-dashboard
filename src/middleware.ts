@@ -11,6 +11,7 @@ export function middleware(request: NextRequest) {
 
 	// Redirect to login if no token and accessing protected route
 	if (!token && request.nextUrl.pathname.startsWith("/dashboard")) {
+		console.log("No token found");
 		const loginUrl = new URL("/login", request.url);
 		loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
 		return NextResponse.redirect(loginUrl);
