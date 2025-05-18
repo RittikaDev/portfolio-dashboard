@@ -16,6 +16,8 @@ import {
 import { Pencil, Trash } from "lucide-react";
 import axios from "axios";
 import RitchTextEditor from "@/components/ui/rich-text-editor";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const BlogManagement = () => {
 	const [blogs, setBlogs] = useState<any[]>([]);
@@ -122,9 +124,25 @@ const BlogManagement = () => {
 	};
 
 	// Delete handler
-	const handleDelete = async (id: string) => {
-		await fetch(`http://localhost:5000/api/blog/${id}`, { method: "DELETE" });
-		setBlogs((prev) => prev.filter((b) => b._id !== id));
+	const handleDelete = (id: string) => {
+		confirmAlert({
+			title: "Confirm Deletion",
+			message: "Are you sure you want to delete this blog?",
+			buttons: [
+				{
+					label: "Yes",
+					onClick: async () => {
+						await fetch(`http://localhost:5000/api/blog/${id}`, {
+							method: "DELETE",
+						});
+						setBlogs((prev) => prev.filter((b) => b._id !== id));
+					},
+				},
+				{
+					label: "No",
+				},
+			],
+		});
 	};
 
 	return (
