@@ -9,10 +9,11 @@ import { RootState } from "../store";
 import { logout, setUser } from "../features/auth/authSlice";
 import { signOut } from "next-auth/react";
 import toast from "react-hot-toast";
+import envConfig from "@/config/env.config";
 
 const baseQuery = fetchBaseQuery({
 	// baseUrl: process.env.API_BASE_URL,
-	baseUrl: "http://localhost:5000",
+	baseUrl: `${envConfig.baseApi}`,
 	credentials: "include",
 	prepareHeaders: (headers, { getState }) => {
 		const access_token = (getState() as RootState).auth.access_token;
@@ -36,7 +37,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 			const refreshToken = (api.getState() as RootState).auth.refresh_token;
 
 			// Make a request to refresh the token
-			const res = await fetch(`${process.env.API_BASE_URL}refresh-token`, {
+			const res = await fetch(`${envConfig.baseApi}/refresh-token`, {
 				method: "POST",
 				credentials: "include",
 				headers: {

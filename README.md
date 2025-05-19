@@ -1,16 +1,32 @@
-# Portfolio Frontend
+# Portfolio - Dashboard
 
-This is a personal project portfolio built using Next.Js mainly. It showcases various projects, with a focus on providing a smooth and interactive user experience through UI components and dynamic content loading.
+A secure admin dashboard for managing portfolio content.
 
 ## Features
 
-- **Project Showcase**: Each project includes a title, description, links to GitHub repositories (frontend & backend), deployment links, and a list of technologies used.
-- **Responsive Design**: The portfolio is responsive and works across different screen sizes, ensuring a great user experience on both mobile and desktop devices.
-- **Image Gallery**: An interactive image gallery displays snapshots of each project.
-- **Shiny Button**: A shiny, animated button that allows users to download your resume.
-- **Animated Title & Content**: Titles and content come to life with animated effects.
-- **Tech Stack Information**: The portfolio dynamically shows the frontend and backend tech stack used for each project.
-- **Background Image**: The header section includes a background image with a low opacity effect, providing a visually appealing look.
+- **✅ Project Management**
+
+  - Create, edit, delete projects
+  - Add details like title, slug, brief, description, tech stack, GitHub links, deployment link, cover image & gallery
+
+- **✅ Blog Management**
+
+  - Create, edit, delete blogs
+  - Add blog title, cover, brief, published date, read time, and content
+
+- **✅ Skill Management**
+
+  - Add, update, or remove skills
+  - Categorize skills (e.g., frontend, backend, tools)
+
+- **✅ Experience Management**
+
+  - Add, update, or remove experiences
+  - Define title, company, duration, description, and responsibilities
+
+- **✅ Message Viewer**
+  - View all messages submitted from the contact form
+  - See sender name, email, message body, and submission timestamp
 
 ## Technologies Used
 
@@ -30,7 +46,7 @@ To run the portfolio locally, follow these steps:
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/RittikaDev/portfolio-nextjs-frontend
+   git clone https://github.com/RittikaDev/portfolio-dashboard
    cd portfolio
    ```
 
@@ -43,12 +59,7 @@ To run the portfolio locally, follow these steps:
 - **Create a `.env` file in the root directory of the project with the following environment variables**:
 
   ```env
-  GITHUB_ID=
-  GITHUB_SECRET=
-  GOOGLE_ID=
-  GOOGLE_SECRET=
-  NEXTAUTH_SECRET=
-  API_BASE_URL=
+  NEXT_PUBLIC_API_BASE_UR=
   ```
 
 - **Start the development server**:

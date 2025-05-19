@@ -17,6 +17,9 @@ import { Pencil, Trash } from "lucide-react";
 import axios from "axios";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import envConfig from "@/config/env.config";
+import { confirmAlert } from "react-confirm-alert";
+import LoadingPage from "@/app/loading";
 type ProjectProps = {
 	token: string;
 };
@@ -31,13 +34,20 @@ const DashboardProjectTable = ({ token }: ProjectProps) => {
 
 	useEffect(() => {
 		const fetchProjects = async () => {
-			const res = await fetch(
-				// "https://portfolio-v2-alpha-woad.vercel.app/api/projects/featured"
-				"http://localhost:5000/api/projects/featured"
-			);
-			const { data } = await res.json();
-			console.log(data);
-			setProjects(data);
+			setLoading(true);
+			try {
+				const res = await fetch(
+					// "https://portfolio-v2-alpha-woad.vercel.app/api/projects/featured"
+					`${envConfig.baseApi}/api/projects/featured`
+				);
+				const { data } = await res.json();
+				// console.log(data);
+				setProjects(data);
+			} catch (err) {
+				console.error("Failed to fetch blogs", err);
+			} finally {
+				setLoading(false);
+			}
 		};
 		fetchProjects();
 	}, []);
@@ -99,7 +109,7 @@ const DashboardProjectTable = ({ token }: ProjectProps) => {
 		if (isEditing) {
 			const res = await fetch(
 				// `https://portfolio-v2-alpha-woad.vercel.app/api/projects/${editingProject._id}`,
-				`http://localhost:5000/api/projects/${editingProject._id}`,
+				`${envConfig.baseApi}/api/projects/${editingProject._id}`,
 				{
 					method: "PUT",
 					headers: {
@@ -121,17 +131,45 @@ const DashboardProjectTable = ({ token }: ProjectProps) => {
 	};
 
 	const handleDelete = async (projectId: string) => {
-		const res = await fetch(
-			`https://portfolio-v2-alpha-woad.vercel.app/api/projects/${projectId}`,
-			{
-				method: "DELETE",
-				headers: { Authorization: `Bearer ${token}` },
-			}
-		);
-		if (res.ok) {
-			toast.success("Deleted succesfully");
-			setProjects((prev) => prev.filter((proj) => proj._id !== projectId));
-		}
+		// const res = await fetch(
+		// 	`https://portfolio-v2-alpha-woad.vercel.app/api/projects/${projectId}`,
+		// 	{
+		// 		method: "DELETE",
+		// 		headers: { Authorization: `Bearer ${token}` },
+		// 	}
+		// );
+		// if (res.ok) {
+		// 	toast.success("Deleted succesfully");
+		// 	setProjects((prev) => prev.filter((proj) => proj._id !== projectId));
+		// }
+
+		confirmAlert({
+			title: "Confirm Deletion",
+			message: "Are you sure you want to delete this project?",
+			buttons: [
+				{
+					label: "Yes",
+					onClick: async () => {
+						const res = await fetch(
+							`https://portfolio-v2-alpha-woad.vercel.app/api/projects/${projectId}`,
+							{
+								method: "DELETE",
+								headers: { Authorization: `Bearer ${token}` },
+							}
+						);
+						if (res.ok) {
+							toast.success("Deleted succesfully");
+							setProjects((prev) =>
+								prev.filter((proj) => proj._id !== projectId)
+							);
+						}
+					},
+				},
+				{
+					label: "No",
+				},
+			],
+		});
 	};
 
 	// const handleChange = (e: any) => {
@@ -274,62 +312,66 @@ const DashboardProjectTable = ({ token }: ProjectProps) => {
 				</DialogContent>
 			</Dialog>
 
-			<Table>
-				<TableHeader>
-					<TableRow>
-						<TableHead>Title</TableHead>
-						<TableHead>Image</TableHead>
-						<TableHead>Live Link</TableHead>
-						<TableHead>Brief</TableHead>
-						<TableHead>Actions</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{projects.map((project) => (
-						<TableRow key={project?._id}>
-							<TableCell>{project?.title}</TableCell>
-							<TableCell>
-								<Image
-									src={project?.cover}
-									alt="project image"
-									width="100"
-									height="100"
-								/>
-							</TableCell>
-							<TableCell>
-								{" "}
-								<a
-									href={project?.frontend?.deploymentLink}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all"
-								>
-									{project?.frontend?.deploymentLink
-										? "View Project"
-										: "No Link"}
-								</a>
-							</TableCell>
-							<TableCell>{project?.brief}</TableCell>
-							<TableCell className="flex space-x-2">
-								<Button
-									size="icon"
-									variant="outline"
-									onClick={() => handleEdit(project)}
-								>
-									<Pencil className="w-4 h-4" />
-								</Button>
-								<Button
-									size="icon"
-									variant="destructive"
-									onClick={() => handleDelete(project?._id)}
-								>
-									<Trash className="w-4 h-4" />
-								</Button>
-							</TableCell>
+			{loading ? (
+				<LoadingPage />
+			) : (
+				<Table>
+					<TableHeader>
+						<TableRow>
+							<TableHead>Title</TableHead>
+							<TableHead>Image</TableHead>
+							<TableHead>Live Link</TableHead>
+							<TableHead>Brief</TableHead>
+							<TableHead>Actions</TableHead>
 						</TableRow>
-					))}
-				</TableBody>
-			</Table>
+					</TableHeader>
+					<TableBody>
+						{projects.map((project) => (
+							<TableRow key={project?._id}>
+								<TableCell>{project?.title}</TableCell>
+								<TableCell>
+									<Image
+										src={project?.cover}
+										alt="project image"
+										width="100"
+										height="100"
+									/>
+								</TableCell>
+								<TableCell>
+									{" "}
+									<a
+										href={project?.frontend?.deploymentLink}
+										target="_blank"
+										rel="noopener noreferrer"
+										className="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all"
+									>
+										{project?.frontend?.deploymentLink
+											? "View Project"
+											: "No Link"}
+									</a>
+								</TableCell>
+								<TableCell>{project?.brief}</TableCell>
+								<TableCell className="flex space-x-2">
+									<Button
+										size="icon"
+										variant="outline"
+										onClick={() => handleEdit(project)}
+									>
+										<Pencil className="w-4 h-4" />
+									</Button>
+									<Button
+										size="icon"
+										variant="destructive"
+										onClick={() => handleDelete(project?._id)}
+									>
+										<Trash className="w-4 h-4" />
+									</Button>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			)}
 		</div>
 	);
 };

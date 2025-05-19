@@ -9,6 +9,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import envConfig from "@/config/env.config";
+import LoadingPage from "@/app/loading";
 
 type ContactProps = {
 	token: string;
@@ -16,25 +18,35 @@ type ContactProps = {
 
 const ContactManagement = ({ token }: ContactProps) => {
 	const [messages, setMessages] = useState<any[]>([]);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
+		// console.log(token);
 		const fetchMessages = async () => {
-			const res = await fetch(
-				// "https://portfolio-v2-alpha-woad.vercel.app/api/contact",
-				"http://localhost:5000/api/contact",
-				{
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
-			const { data } = await res.json();
-			setMessages(data);
+			setLoading(true);
+			try {
+				const res = await fetch(
+					// "https://portfolio-v2-alpha-woad.vercel.app/api/contact",
+					`${envConfig.baseApi}/api/contact`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${token}`,
+						},
+						cache: "no-store",
+					}
+				);
+				const { data } = await res.json();
+				setMessages(data);
+			} catch (err) {
+				console.error("Failed to fetch blogs", err);
+			} finally {
+				setLoading(false);
+			}
 		};
 		fetchMessages();
-	}, [token]);
+	}, []);
 
 	return (
 		<div className="p-6">
@@ -43,24 +55,28 @@ const ContactManagement = ({ token }: ContactProps) => {
 			</div>
 
 			{/* DISPLAY MESSAGES TABLE */}
-			<Table>
-				<TableHeader>
-					<TableRow>
-						<TableHead>User Name</TableHead>
-						<TableHead>User Email</TableHead>
-						<TableHead>Message</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{messages.map((message) => (
-						<TableRow key={message._id}>
-							<TableCell>{message.userName}</TableCell>
-							<TableCell>{message.userEmail}</TableCell>
-							<TableCell>{message.message}</TableCell>
+			{loading ? (
+				<LoadingPage />
+			) : (
+				<Table>
+					<TableHeader>
+						<TableRow>
+							<TableHead>User Name</TableHead>
+							<TableHead>User Email</TableHead>
+							<TableHead>Message</TableHead>
 						</TableRow>
-					))}
-				</TableBody>
-			</Table>
+					</TableHeader>
+					<TableBody>
+						{messages.map((message) => (
+							<TableRow key={message._id}>
+								<TableCell>{message.userName}</TableCell>
+								<TableCell>{message.userEmail}</TableCell>
+								<TableCell>{message.message}</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			)}
 		</div>
 	);
 };

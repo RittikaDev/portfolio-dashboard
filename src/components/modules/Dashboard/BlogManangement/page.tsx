@@ -18,6 +18,8 @@ import axios from "axios";
 import RitchTextEditor from "@/components/ui/rich-text-editor";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import envConfig from "@/config/env.config";
+import LoadingPage from "@/app/loading";
 
 type BlogProps = {
 	token: string;
@@ -51,11 +53,19 @@ const BlogManagement = ({ token }: BlogProps) => {
 
 	// Fetch all blogs
 	useEffect(() => {
-		(async () => {
-			const res = await fetch("http://localhost:5000/api/blog");
-			const json = await res.json();
-			setBlogs(json.data);
-		})();
+		const fetchBlogs = async () => {
+			setLoading(true);
+			try {
+				const res = await fetch(`${envConfig.baseApi}/api/blog`);
+				const json = await res.json();
+				setBlogs(json.data);
+			} catch (err) {
+				console.error("Failed to fetch blogs", err);
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchBlogs();
 	}, []);
 
 	// Image upload handler
@@ -109,11 +119,11 @@ const BlogManagement = ({ token }: BlogProps) => {
 
 	// Save or update
 	const handleSave = async () => {
-		let url = "http://localhost:5000/api/blog";
+		let url = `${envConfig.baseApi}/api/blog`;
 		let method = "POST";
 
 		if (isEditing && editingBlog && editingBlog._id) {
-			url = `http://localhost:5000/api/blog/${editingBlog._id}`;
+			url = `${envConfig.baseApi}/api/blog/${editingBlog._id}`;
 			method = "PUT";
 		}
 		// const method = isEditing ? "PUT" : "POST";
@@ -154,7 +164,7 @@ const BlogManagement = ({ token }: BlogProps) => {
 				{
 					label: "Yes",
 					onClick: async () => {
-						await fetch(`http://localhost:5000/api/blog/${id}`, {
+						await fetch(`${envConfig.baseApi}/api/blog/${id}`, {
 							method: "DELETE",
 						});
 						setBlogs((prev) => prev.filter((b) => b._id !== id));
@@ -278,48 +288,52 @@ const BlogManagement = ({ token }: BlogProps) => {
 				</DialogContent>
 			</Dialog>
 
-			<Table>
-				<TableHeader>
-					<TableRow>
-						<TableHead>Title</TableHead>
-						<TableHead>Brief</TableHead>
-						<TableHead>Content</TableHead>
-						<TableHead>Published</TableHead>
-						<TableHead>Read Time</TableHead>
-						<TableHead>Actions</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{blogs.map((b) => (
-						<TableRow key={b._id}>
-							<TableCell>{b.title}</TableCell>
-							<TableCell>{b.brief}</TableCell>
-							<TableCell>{truncateText(stripHtml(b.content), 80)}</TableCell>
-
-							<TableCell>
-								{new Date(b.publishedDate).toLocaleDateString()}
-							</TableCell>
-							<TableCell>{b.readTime} min</TableCell>
-							<TableCell className="flex space-x-2">
-								<Button
-									size="icon"
-									variant="outline"
-									onClick={() => openDialog(b)}
-								>
-									<Pencil className="w-4 h-4" />
-								</Button>
-								<Button
-									size="icon"
-									variant="destructive"
-									onClick={() => handleDelete(b._id)}
-								>
-									<Trash className="w-4 h-4" />
-								</Button>
-							</TableCell>
+			{loading ? (
+				<LoadingPage />
+			) : (
+				<Table>
+					<TableHeader>
+						<TableRow>
+							<TableHead>Title</TableHead>
+							<TableHead>Brief</TableHead>
+							<TableHead>Content</TableHead>
+							<TableHead>Published</TableHead>
+							<TableHead>Read Time</TableHead>
+							<TableHead>Actions</TableHead>
 						</TableRow>
-					))}
-				</TableBody>
-			</Table>
+					</TableHeader>
+					<TableBody>
+						{blogs.map((b) => (
+							<TableRow key={b._id}>
+								<TableCell>{b.title}</TableCell>
+								<TableCell>{b.brief}</TableCell>
+								<TableCell>{truncateText(stripHtml(b.content), 80)}</TableCell>
+
+								<TableCell>
+									{new Date(b.publishedDate).toLocaleDateString()}
+								</TableCell>
+								<TableCell>{b.readTime} min</TableCell>
+								<TableCell className="flex space-x-2">
+									<Button
+										size="icon"
+										variant="outline"
+										onClick={() => openDialog(b)}
+									>
+										<Pencil className="w-4 h-4" />
+									</Button>
+									<Button
+										size="icon"
+										variant="destructive"
+										onClick={() => handleDelete(b._id)}
+									>
+										<Trash className="w-4 h-4" />
+									</Button>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			)}
 		</div>
 	);
 };

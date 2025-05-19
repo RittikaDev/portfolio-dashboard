@@ -10,13 +10,14 @@ import {
 	Mailbox,
 	LogOut,
 } from "lucide-react";
+import LoadingPage from "@/app/loading";
 
 type DashboardProps = {
 	token: string;
 };
 
 const Dashboard = ({ token }: DashboardProps) => {
-	const { data: user } = useGetMeQuery(token);
+	const { data: user, isLoading } = useGetMeQuery(token);
 	const userInfo = user?.data;
 
 	const adminActions = [
@@ -51,6 +52,8 @@ const Dashboard = ({ token }: DashboardProps) => {
 			icon: <LogOut className="w-6 h-6 text-emerald-600" />,
 		},
 	];
+
+	if (isLoading) return <LoadingPage />;
 
 	return (
 		<div className="min-h-screen py-10 px-4 flex flex-col items-center justify-center bg-gradient-to-br from-emerald-100 to-white dark:from-gray-900 dark:to-gray-800">
