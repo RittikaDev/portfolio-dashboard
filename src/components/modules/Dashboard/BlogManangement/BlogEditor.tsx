@@ -5,7 +5,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
 interface BlogEditorProps {
-	initialContent: string; // HTML string or empty string
+	initialContent: string;
 	onUpdate: (content: string) => void;
 }
 
@@ -17,11 +17,11 @@ const BlogEditor: React.FC<BlogEditorProps> = ({
 		extensions: [StarterKit],
 		content: initialContent,
 		onUpdate: ({ editor }) => {
-			onUpdate(editor.getHTML()); // send HTML back to parent
+			onUpdate(editor.getHTML());
 		},
 	});
 
-	// If initialContent changes externally, update editor content
+	// IF INITIALCONTENT CHANGES EXTERNALLY, UPDATE EDITOR CONTENT
 	useEffect(() => {
 		if (editor && initialContent !== editor.getHTML()) {
 			editor.commands.setContent(initialContent, false);

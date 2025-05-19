@@ -2,36 +2,93 @@
 
 import { useGetMeQuery } from "@/redux/features/authApi";
 import React from "react";
+import {
+	FolderKanban,
+	FileText,
+	BriefcaseBusiness,
+	Sparkles,
+	Mailbox,
+	LogOut,
+} from "lucide-react";
+
 type DashboardProps = {
-  token: string;
+	token: string;
 };
 
 const Dashboard = ({ token }: DashboardProps) => {
-  const { data: user } = useGetMeQuery(token);
-  console.log(user);
+	const { data: user } = useGetMeQuery(token);
+	const userInfo = user?.data;
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-10">
-      {user && (
-        <>
-          <h1 className="text-4xl font-semibold text-center text-gray-800 dark:text-gray-500 mb-4">
-            Welcome !!
-          </h1>
-          <h2 className="text-2xl text-center text-gray-600 mb-6">
-            Logged-in user email:
-            <span className="font-semibold"> {user?.data.email}</span>
-          </h2>
+	const adminActions = [
+		{
+			title: "Manage Projects",
+			description: "Add new, update, or delete projects in your portfolio.",
+			icon: <FolderKanban className="w-6 h-6 text-emerald-600" />,
+		},
+		{
+			title: "Manage Blogs",
+			description: "Write, edit, or remove blog posts for your website.",
+			icon: <FileText className="w-6 h-6 text-emerald-600" />,
+		},
+		{
+			title: "Manage Skills",
+			description: "Update your skill set shown on the portfolio.",
+			icon: <Sparkles className="w-6 h-6 text-emerald-600" />,
+		},
+		{
+			title: "Manage Experience",
+			description: "Add or modify past job experiences and details.",
+			icon: <BriefcaseBusiness className="w-6 h-6 text-emerald-600" />,
+		},
+		{
+			title: "View Messages",
+			description: "See who has contacted you via the contact form.",
+			icon: <Mailbox className="w-6 h-6 text-emerald-600" />,
+		},
+		{
+			title: "Logout",
+			description: "Securely sign out from the admin dashboard.",
+			icon: <LogOut className="w-6 h-6 text-emerald-600" />,
+		},
+	];
 
-          <div className="bg-slate-200 dark:bg-slate-800  p-6 rounded-lg shadow-lg max-w-md w-full">
-            <p className="text-center text-gray-500 dark:text-gray-200 text-sm">
-              This is your dashboard, where you can manage your settings and
-              preferences.
-            </p>
-          </div>
-        </>
-      )}
-    </div>
-  );
+	return (
+		<div className="min-h-screen py-10 px-4 flex flex-col items-center justify-center bg-gradient-to-br from-emerald-100 to-white dark:from-gray-900 dark:to-gray-800">
+			{userInfo && (
+				<>
+					<h1 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-200 mb-2">
+						Admin Dashboard
+					</h1>
+					<p className="text-lg text-gray-600 dark:text-gray-300 mb-8 text-center">
+						Logged in as:
+						<span className="font-semibold text-emerald-700 dark:text-emerald-300">
+							{" "}
+							{userInfo.email}
+						</span>
+					</p>
+
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl w-full">
+						{adminActions.map((action, index) => (
+							<div
+								key={index}
+								className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md p-5 flex items-start gap-4 hover:shadow-lg transition-all hover:scale-[1.02] cursor-pointer"
+							>
+								<div>{action.icon}</div>
+								<div>
+									<h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+										{action.title}
+									</h3>
+									<p className="text-sm text-gray-600 dark:text-gray-300">
+										{action.description}
+									</p>
+								</div>
+							</div>
+						))}
+					</div>
+				</>
+			)}
+		</div>
+	);
 };
 
 export default Dashboard;

@@ -2,8 +2,9 @@
 
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { selectCurrentToken } from "@/redux/features/auth/authSlice";
+import LoadingPage from "@/app/loading";
 
 export default function ProtectedRoute({
 	children,
@@ -12,14 +13,18 @@ export default function ProtectedRoute({
 }) {
 	const token = useSelector(selectCurrentToken);
 	const router = useRouter();
+	const [isMounted, setIsMounted] = useState(false);
 
 	useEffect(() => {
-		if (!token) {
-			router.replace("/login"); // redirect to login if not authenticated
-		}
-	}, [token, router]);
+		setIsMounted(true);
+	}, []);
 
-	if (!token) return null; // prevent flashing content
+	useEffect(() => {
+		if (isMounted && !token) router.replace("/login");
+	}, [isMounted, token, router]);
+
+	if (!isMounted) return null;
+	if (!token) <LoadingPage />;
 
 	return <>{children}</>;
 }
