@@ -101,6 +101,7 @@ export default function Skills({ token }: SkillProps) {
 						});
 						if (res.ok) {
 							fetchSkills();
+							toast.success("Skills deleted successfully");
 							if (id === editingId) {
 								setForm({
 									title: "",

@@ -20,6 +20,7 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import envConfig from "@/config/env.config";
 import LoadingPage from "@/app/loading";
+import toast from "react-hot-toast";
 
 type BlogProps = {
 	token: string;
@@ -164,10 +165,20 @@ const BlogManagement = ({ token }: BlogProps) => {
 				{
 					label: "Yes",
 					onClick: async () => {
-						await fetch(`${envConfig.baseApi}/api/blog/${id}`, {
-							method: "DELETE",
-						});
-						setBlogs((prev) => prev.filter((b) => b._id !== id));
+						const res: any = await fetch(
+							`${envConfig.baseApi}/api/blog/${id}`,
+							{
+								method: "DELETE",
+								headers: {
+									"Content-Type": "application/json",
+									Authorization: `Bearer ${token}`,
+								},
+							}
+						);
+						if (res.success) {
+							toast.success("Blog deleted successfully");
+							setBlogs((prev) => prev.filter((b) => b._id !== id));
+						} else toast.error("Failed to delete blog");
 					},
 				},
 				{

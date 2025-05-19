@@ -38,7 +38,7 @@ const LoginPage = () => {
 					expires: 1,
 				});
 				toast.success(res?.message);
-				router.push("/");
+				// router.push("/");
 				router.push("/dashboard");
 			}
 		} catch (err) {

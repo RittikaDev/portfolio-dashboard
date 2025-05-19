@@ -26,20 +26,23 @@ const LoginPage = () => {
 			// console.log("Login Success:", res);
 			if (res.success) {
 				const user = verifyToken(res?.data?.token);
-				console.log(user);
+				console.log(res.data.token);
+				Cookies.set("refreshToken", res.data.token, {
+					path: "/",
+					expires: 1,
+					sameSite: "Lax",
+					secure: true,
+				});
 				dispatch(
 					setUser({
 						user: user,
 						access_token: res?.data?.token,
 					})
 				);
-				Cookies.set("authToken", res.data.token, {
-					path: "/",
-					expires: 1,
-				});
 				toast.success(res?.message);
-				router.push("/");
-				router.push("/dashboard");
+				setTimeout(() => {
+					router.push("/dashboard");
+				}, 100);
 			}
 		} catch (err) {
 			console.log(err);

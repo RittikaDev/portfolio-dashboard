@@ -2,9 +2,9 @@
 import { verifyToken } from "./verifyToken";
 
 export async function requireAuth(context: {
-	req: { cookies: { authToken?: string } };
+	req: { cookies: { refreshToken?: string } };
 }) {
-	const token = context.req.cookies.authToken;
+	const token = context.req.cookies.refreshToken;
 
 	if (!token)
 		return {

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 const ProjectTable = async () => {
 	const cookieStore = await cookies();
-	const token = cookieStore.get("authToken")?.value;
+	const token = cookieStore.get("refreshToken")?.value;
 
 	if (!token) redirect("/login");
 	// console.log(token);

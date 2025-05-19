@@ -127,8 +127,8 @@ export default function Experience({ token }: ExpProps) {
 						);
 						if (res.ok) {
 							fetchExperiences();
-
-							// Reset form if deleted experience was being edited
+							toast.success("Experience deleted successfully");
+							// RESET FORM IF DELETED EXPERIENCE WAS BEING EDITED
 							if (id === editingId) {
 								setForm({
 									title: "",

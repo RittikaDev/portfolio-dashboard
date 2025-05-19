@@ -1,12 +1,8 @@
-// export { default } from "next-auth/middleware";
-
-// export const config = { matcher: ["/dashboard"] }; // ROUTES THAT NEEDS AUTHENTICATION => CHANGE BACK TO /dashboard
-// middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-	const token = request.cookies.get("authToken");
+	const token = request.cookies.get("refreshToken");
 	console.log(token);
 
 	// Redirect to login if no token and accessing protected route

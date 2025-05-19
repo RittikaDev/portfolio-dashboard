@@ -7,6 +7,7 @@ const authApi = baseApi.injectEndpoints({
 				return {
 					url: `/api/auth/login`,
 					method: "POST",
+					credentials: "include",
 					body: userInfo,
 				};
 			},
