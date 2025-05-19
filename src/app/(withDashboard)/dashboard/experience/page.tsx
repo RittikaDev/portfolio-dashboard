@@ -1,13 +1,12 @@
 import Experience from "@/components/modules/Experience";
-import { cookies } from "next/headers";
+import { getToken } from "@/services/AuthService";
 import { redirect } from "next/navigation";
 
 const ExperincePage = async () => {
-	const cookieStore = await cookies();
-	const token = cookieStore.get("refreshToken")?.value;
+  const token = await getToken();
 
-	if (!token) redirect("/login");
-	return <Experience token={token} />;
+  if (!token) redirect("/login");
+  return <Experience token={token} />;
 };
 
 export default ExperincePage;

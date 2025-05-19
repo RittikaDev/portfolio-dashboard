@@ -1,14 +1,15 @@
 import Dashboard from "@/components/modules/Dashboard/Dashboard";
-import { cookies } from "next/headers";
+import { getToken } from "@/services/AuthService";
 import { redirect } from "next/navigation";
 
 const DashboardPage = async () => {
-	const cookieStore = await cookies();
-	const token = cookieStore.get("refreshToken")?.value;
+  // const cookieStore = await cookies();
+  // const token = cookieStore.get("authToken")?.value;
 
-	if (!token) redirect("/login");
-
-	return <Dashboard token={token} />;
+  const token = await getToken();
+  console.log("dashboard", token);
+  if (!token) redirect("/login");
+  return <Dashboard />;
 };
 
 export default DashboardPage;

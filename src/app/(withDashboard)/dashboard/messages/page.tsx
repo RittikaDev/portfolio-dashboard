@@ -1,14 +1,13 @@
 import ContactManagement from "@/components/modules/Dashboard/ContactManagement/page";
-import { cookies } from "next/headers";
+import { getToken } from "@/services/AuthService";
 import { redirect } from "next/navigation";
 
 const MessageTable = async () => {
-	const cookieStore = await cookies();
-	const token = cookieStore.get("refreshToken")?.value;
+  const token = await getToken();
 
-	if (!token) redirect("/login");
-	console.log(token);
-	return <ContactManagement token={token} />;
+  if (!token) redirect("/login");
+  console.log(token);
+  return <ContactManagement token={token} />;
 };
 
 export default MessageTable;
