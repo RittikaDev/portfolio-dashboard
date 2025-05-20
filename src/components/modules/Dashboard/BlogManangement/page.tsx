@@ -175,7 +175,7 @@ const BlogManagement = ({ token }: BlogProps) => {
 								},
 							}
 						);
-						if (res.success) {
+						if (res.ok) {
 							toast.success("Blog deleted successfully");
 							setBlogs((prev) => prev.filter((b) => b._id !== id));
 						} else toast.error("Failed to delete blog");
