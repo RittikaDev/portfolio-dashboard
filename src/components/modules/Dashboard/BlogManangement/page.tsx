@@ -291,6 +291,12 @@ const BlogManagement = ({ token }: BlogProps) => {
 						</Button>
 						<Button
 							onClick={handleSave}
+							disabled={
+								!formData.title?.trim() ||
+								!formData.publishedDate?.trim() ||
+								!formData.readTime?.toString().trim() ||
+								!formData.brief?.trim()
+							}
 							className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg"
 						>
 							{isEditing ? "Update" : "Save"}

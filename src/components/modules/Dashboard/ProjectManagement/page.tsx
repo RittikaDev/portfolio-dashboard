@@ -19,6 +19,7 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 import envConfig from "@/config/env.config";
 import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 import LoadingPage from "@/app/loading";
 type ProjectProps = {
 	token: string;
@@ -303,6 +304,7 @@ const DashboardProjectTable = ({ token }: ProjectProps) => {
 							Cancel
 						</Button>
 						<Button
+							disabled={!formData.title || !formData.brief}
 							onClick={handleSave}
 							className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg"
 						>
